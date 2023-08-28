@@ -1,0 +1,20 @@
+{
+	"name": "youtube_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "datalake_to_adf",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "youtube_csv_to_parquet",
+				"fileSystem": "youtube-cleansed"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
