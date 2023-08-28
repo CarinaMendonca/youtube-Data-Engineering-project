@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Copy youtube csv",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -55,7 +55,7 @@
 							{
 								"source": {
 									"name": "trending_date",
-									"type": "String",
+									"type": "DateTime",
 									"physicalType": "String"
 								},
 								"sink": {
@@ -93,7 +93,7 @@
 									"physicalType": "String"
 								},
 								"sink": {
-									"name": "categoryid",
+									"name": "id",
 									"physicalType": "UTF8"
 								}
 							},
@@ -189,13 +189,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DelimitedText1",
+						"referenceName": "Youtube_csv",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "Parquet1",
+						"referenceName": "Youtube_parquet",
 						"type": "DatasetReference"
 					}
 				]
