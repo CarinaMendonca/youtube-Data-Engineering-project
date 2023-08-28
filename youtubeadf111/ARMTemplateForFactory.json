@@ -87,7 +87,7 @@
 									{
 										"source": {
 											"name": "trending_date",
-											"type": "DateTime",
+											"type": "String",
 											"physicalType": "String"
 										},
 										"sink": {
