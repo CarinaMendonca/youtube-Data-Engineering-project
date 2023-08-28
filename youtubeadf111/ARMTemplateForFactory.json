@@ -1,0 +1,406 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "youtubeadf111"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"datalake_to_adf_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'datalake_to_adf'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://youtubedataset.dfs.core.windows.net/"
+		},
+		"datalake_to_adf_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://youtubedataset.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "youtube-csv",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings",
+									"copyBehavior": "PreserveHierarchy"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "video_id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "videoid",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "trending_date",
+											"type": "DateTime",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "trendingdate",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "title",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "title",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "channel_title",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "channeltitle",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "category_id",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "id",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "publish_time",
+											"type": "DateTime",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "publishtime",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "tags",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "tags",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "views",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "views",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "likes",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "likes",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "dislikes",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "dislikes",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "comment_count",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "comment_count",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "thumbnail_link",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "thumbnaillink",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "yoube_csv",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "youtube_parquet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/yoube_csv')]",
+				"[concat(variables('factoryId'), '/datasets/youtube_parquet')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/yoube_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_to_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "youtubecsv",
+						"fileSystem": "yotube"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "video_id",
+						"type": "String"
+					},
+					{
+						"name": "trending_date",
+						"type": "String"
+					},
+					{
+						"name": "title",
+						"type": "String"
+					},
+					{
+						"name": "channel_title",
+						"type": "String"
+					},
+					{
+						"name": "category_id",
+						"type": "String"
+					},
+					{
+						"name": "publish_time",
+						"type": "String"
+					},
+					{
+						"name": "tags",
+						"type": "String"
+					},
+					{
+						"name": "views",
+						"type": "String"
+					},
+					{
+						"name": "likes",
+						"type": "String"
+					},
+					{
+						"name": "dislikes",
+						"type": "String"
+					},
+					{
+						"name": "comment_count",
+						"type": "String"
+					},
+					{
+						"name": "thumbnail_link",
+						"type": "String"
+					},
+					{
+						"name": "comments_disabled",
+						"type": "String"
+					},
+					{
+						"name": "ratings_disabled",
+						"type": "String"
+					},
+					{
+						"name": "video_error_or_removed",
+						"type": "String"
+					},
+					{
+						"name": "description",
+						"type": "String"
+					},
+					{
+						"name": "region",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_to_adf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/youtube_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_to_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "youtube_csv_to_parquet",
+						"fileSystem": "youtube-cleansed"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_to_adf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/datalake_to_adf')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('datalake_to_adf_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('datalake_to_adf_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
