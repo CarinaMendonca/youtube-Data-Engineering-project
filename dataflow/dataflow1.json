@@ -1,0 +1,93 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "csvparquetdataset",
+						"type": "DatasetReference"
+					},
+					"name": "csvparquet"
+				},
+				{
+					"dataset": {
+						"referenceName": "jsonparquetdataset",
+						"type": "DatasetReference"
+					},
+					"name": "jsonparquet"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "joinedparquet",
+						"type": "DatasetReference"
+					},
+					"name": "parquetanalytics"
+				}
+			],
+			"transformations": [
+				{
+					"name": "parquetjoindataset"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          video_id as string,",
+				"          trending_date as string,",
+				"          title as string,",
+				"          channel_title as string,",
+				"          category_id as integer,",
+				"          publish_time as string,",
+				"          tags as string,",
+				"          views as integer,",
+				"          likes as integer,",
+				"          dislikes as integer,",
+				"          comment_count as string,",
+				"          thumbnail_link as string,",
+				"          comments_disabled as string,",
+				"          ratings_disabled as string,",
+				"          video_error_or_removed as string,",
+				"          description as string,",
+				"          region as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: true,",
+				"     format: 'parquet') ~> csvparquet",
+				"source(output(",
+				"          etag as string,",
+				"          id as integer,",
+				"          kind as string,",
+				"          channelId as string,",
+				"          title as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: true,",
+				"     format: 'parquet') ~> jsonparquet",
+				"csvparquet, jsonparquet join(category_id == id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     partitionBy('roundRobin', 2),",
+				"     broadcast: 'auto')~> parquetjoindataset",
+				"parquetjoindataset sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('key',",
+				"          0,",
+				"          region,",
+				"          category_id",
+				"     )) ~> parquetanalytics"
+			]
+		}
+	}
+}

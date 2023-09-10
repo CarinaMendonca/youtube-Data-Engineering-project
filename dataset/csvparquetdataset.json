@@ -1,0 +1,89 @@
+{
+	"name": "csvparquetdataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "datalake_to_adf",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "youtubecsvtoparquet",
+				"fileSystem": "youtube-cleansed"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "video_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "trending_date",
+				"type": "UTF8"
+			},
+			{
+				"name": "title",
+				"type": "UTF8"
+			},
+			{
+				"name": "channel_title",
+				"type": "UTF8"
+			},
+			{
+				"name": "category_id",
+				"type": "INT32"
+			},
+			{
+				"name": "publish_time",
+				"type": "UTF8"
+			},
+			{
+				"name": "tags",
+				"type": "UTF8"
+			},
+			{
+				"name": "views",
+				"type": "INT32"
+			},
+			{
+				"name": "likes",
+				"type": "INT32"
+			},
+			{
+				"name": "dislikes",
+				"type": "INT32"
+			},
+			{
+				"name": "comment_count",
+				"type": "UTF8"
+			},
+			{
+				"name": "thumbnail_link",
+				"type": "UTF8"
+			},
+			{
+				"name": "comments_disabled",
+				"type": "UTF8"
+			},
+			{
+				"name": "ratings_disabled",
+				"type": "UTF8"
+			},
+			{
+				"name": "video_error_or_removed",
+				"type": "UTF8"
+			},
+			{
+				"name": "description",
+				"type": "UTF8"
+			},
+			{
+				"name": "region",
+				"type": "UTF8"
+			}
+		]
+	}
+}
