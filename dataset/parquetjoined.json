@@ -1,0 +1,19 @@
+{
+	"name": "parquetjoined",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "datalake_to_adf",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "youtube-analytics"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
