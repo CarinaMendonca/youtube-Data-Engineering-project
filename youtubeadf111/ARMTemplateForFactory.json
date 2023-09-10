@@ -29,6 +29,218 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow2",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "dataflow1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"csvparquet": {},
+									"jsonparquet": {},
+									"parquetanalytics": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/csvparquetdataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_to_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "youtubecsvtoparquet",
+						"fileSystem": "youtube-cleansed"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "video_id",
+						"type": "UTF8"
+					},
+					{
+						"name": "trending_date",
+						"type": "UTF8"
+					},
+					{
+						"name": "title",
+						"type": "UTF8"
+					},
+					{
+						"name": "channel_title",
+						"type": "UTF8"
+					},
+					{
+						"name": "category_id",
+						"type": "INT32"
+					},
+					{
+						"name": "publish_time",
+						"type": "UTF8"
+					},
+					{
+						"name": "tags",
+						"type": "UTF8"
+					},
+					{
+						"name": "views",
+						"type": "INT32"
+					},
+					{
+						"name": "likes",
+						"type": "INT32"
+					},
+					{
+						"name": "dislikes",
+						"type": "INT32"
+					},
+					{
+						"name": "comment_count",
+						"type": "UTF8"
+					},
+					{
+						"name": "thumbnail_link",
+						"type": "UTF8"
+					},
+					{
+						"name": "comments_disabled",
+						"type": "UTF8"
+					},
+					{
+						"name": "ratings_disabled",
+						"type": "UTF8"
+					},
+					{
+						"name": "video_error_or_removed",
+						"type": "UTF8"
+					},
+					{
+						"name": "description",
+						"type": "UTF8"
+					},
+					{
+						"name": "region",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_to_adf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/joinedparquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_to_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "youtube-analytics"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_to_adf')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/jsonparquetdataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_to_adf",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "youtubejsontoparquet",
+						"fileSystem": "youtube-cleansed"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "etag",
+						"type": "UTF8"
+					},
+					{
+						"name": "id",
+						"type": "UTF8"
+					},
+					{
+						"name": "kind",
+						"type": "UTF8"
+					},
+					{
+						"name": "channelId",
+						"type": "UTF8"
+					},
+					{
+						"name": "title",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_to_adf')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -61,6 +273,106 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "csvparquetdataset",
+								"type": "DatasetReference"
+							},
+							"name": "csvparquet"
+						},
+						{
+							"dataset": {
+								"referenceName": "jsonparquetdataset",
+								"type": "DatasetReference"
+							},
+							"name": "jsonparquet"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "joinedparquet",
+								"type": "DatasetReference"
+							},
+							"name": "parquetanalytics"
+						}
+					],
+					"transformations": [
+						{
+							"name": "parquetjoindataset"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          video_id as string,",
+						"          trending_date as string,",
+						"          title as string,",
+						"          channel_title as string,",
+						"          category_id as integer,",
+						"          publish_time as string,",
+						"          tags as string,",
+						"          views as integer,",
+						"          likes as integer,",
+						"          dislikes as integer,",
+						"          comment_count as string,",
+						"          thumbnail_link as string,",
+						"          comments_disabled as string,",
+						"          ratings_disabled as string,",
+						"          video_error_or_removed as string,",
+						"          description as string,",
+						"          region as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'parquet') ~> csvparquet",
+						"source(output(",
+						"          etag as string,",
+						"          id as integer,",
+						"          kind as string,",
+						"          channelId as string,",
+						"          title as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: true,",
+						"     format: 'parquet') ~> jsonparquet",
+						"csvparquet, jsonparquet join(category_id == id,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     partitionBy('roundRobin', 2),",
+						"     broadcast: 'auto')~> parquetjoindataset",
+						"parquetjoindataset sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('key',",
+						"          0,",
+						"          region,",
+						"          category_id",
+						"     )) ~> parquetanalytics"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/csvparquetdataset')]",
+				"[concat(variables('factoryId'), '/datasets/jsonparquetdataset')]",
+				"[concat(variables('factoryId'), '/datasets/joinedparquet')]"
+			]
 		}
 	]
 }
