@@ -1,9 +1,0 @@
-{
-	"name": "youtubeadf111",
-	"location": "uksouth",
-	"identity": {
-		"type": "SystemAssigned",
-		"principalId": "4ca62b68-29db-470c-9192-703238485716",
-		"tenantId": "cf587e1a-65a7-4bf3-80ff-9b186d0b2ff7"
-	}
-}
